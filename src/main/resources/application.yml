@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agentic-schema-evolution-platform
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dataeng_db
+    username: postgres
+    password: postgrespassword
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: agentic-dataeng-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+pipeline:
+  kafka:
+    topics: events.ecommerce_orders,events.fintech_cdc,events.iot_telemetry,events.healthcare_ehr
+
+langchain4j:
+  google-ai-gemini:
+    chat-model:
+      api-key: ${'$'}{GEMINI_API_KEY:MY_GEMINI_API_KEY}
+      model-name: gemini-3.8-flash
+      temperature: 0.1
+      log-requests: true
+      log-responses: true
+
+logging:
+  level:
+    com.agentic.dataeng: INFO
+    org.springframework.kafka: INFO

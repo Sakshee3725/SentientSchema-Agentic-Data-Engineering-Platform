@@ -1,0 +1,8 @@
+
+
+CREATE TABLE IF NOT EXISTS pipeline_registry (
+    id BIGSERIAL PRIMARY KEY,
+    pipeline_id VARCHAR(255) NOT NULL UNIQUE,
+    pipeline_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
