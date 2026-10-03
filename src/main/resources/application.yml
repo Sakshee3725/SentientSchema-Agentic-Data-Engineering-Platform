@@ -1,14 +1,15 @@
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: native
 
 spring:
   application:
     name: agentic-schema-evolution-platform
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/dataeng_db
-    username: postgres
-    password: postgrespassword
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/dataeng_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgrespassword}
     driver-class-name: org.postgresql.Driver
   
   jpa:
@@ -24,12 +25,16 @@ spring:
     locations: classpath:db/migration
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: agentic-dataeng-consumer-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      auto-startup: ${SPRING_KAFKA_LISTENER_AUTO_STARTUP:true}
+    admin:
+      auto-create: false
 
 pipeline:
   kafka:
@@ -38,8 +43,8 @@ pipeline:
 langchain4j:
   google-ai-gemini:
     chat-model:
-      api-key: ${'$'}{GEMINI_API_KEY:MY_GEMINI_API_KEY}
-      model-name: gemini-3.8-flash
+      api-key: ${GEMINI_API_KEY:MY_GEMINI_API_KEY}
+      model-name: gemini-2.0-flash
       temperature: 0.1
       log-requests: true
       log-responses: true
@@ -47,11 +52,4 @@ langchain4j:
 logging:
   level:
     com.agentic.dataeng: INFO
-    org.springframework.kafka: INFO
-
-
-    server:
-  forward-headers-strategy: framework
-  tomcat:
-    remoteip:
-      internal-proxies: ".*"
+    org.springframework.kafka: WARN
